@@ -1,48 +1,38 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+const express = require("express");
 
 const app = express();
 
-app.use(bodyParser.json());
 
 app.use((req, res, next)=>{
     //this means no matter which domain sending request it is allowed to access server
-    res.setHeader("Access-Control-Allow-Origin","*");
-    // allow types of headers
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');
-    //allow methods that we want to make accessible
-    res.setHeader('Access-Control-Allow-Methods',"GET,POST,PUT,DELETE,OPTIONS");
+    console.log("Kanban Server")
     next();
 });
 
-app.get('/api/posts',(req, res)=>{
-    const posts = [
-        {
-            title: "Nashik",
-            content: "A beautiful town situated on the banks of the river Godavari, Nashik is surrounded by nine hills; blessed with an enchanting panorama, and pleasant climate Popularly known as the wine and grape capital of India."
-        },
-        {
-            title: "Pune",
-            content: "Pune is widely regarded to be the second major IT hub and the most important automobile and manufacturing hub in India. India's first indigenously run girls' school was started in Pune by Savitribai Phule."
-        },
-        {
-            title: "Aurangabad",
-            content: "Aurangabad city is a tourism hub, surrounded by many historical monuments, including the Ajanta Caves and Ellora Caves, as well as Bibi Ka Maqbara replica of Taj Mahal) and Panchakki.. Aurangabad is known as The City of Gates."
-        }
-    ]
-    //res.send("Hello from improved server!");
-    res.status(200).json({
-        message: "Posts received successfully",
-        posts: posts
+
+app.put('/api/tasks/:id', (req, res, next)=>{
+    const todo = new todo({
+        _id: req.body.id,
+        name:  req.body.name,
+        descr:req.body.descr,
+        assign:req.body.assig,
+        s_date:req.body.s_date,
+        d_date:req.body.d_date,
+        status:req.body.status
+    });
+
+    Todo.updateOne({_id: req.params.id}, post).then(result =>{
+        console.log(result);
+        res.status(200).json({message: "updated successfully"});
     });
 });
 
-app.post('/api/posts',(req, res)=>{
-    const post = req.body;
-    console.log('*******Post Received', post);
-    res.status(201).json({
-        message:"Posts stored successfully"
+app.delete('/api/tasks/:id', (req, res)=>{
+    Todo.deleteOne({_id: req.params.id}).then(result =>{
+        console.log(result);
+        res.status(200).json({message: "Task Delete!"});
     });
 });
+
 
 module.exports = app;
